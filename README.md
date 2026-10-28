@@ -124,12 +124,71 @@ WeatherGPT/
 ## 📋 Implementation Roadmap
 
 - [x] **Phase 1**: Initial Project Structure, Specifications & Documentation
-- [ ] **Phase 2**: FastAPI Backend Core & Meteorological Data Integration
-- [ ] **Phase 3**: Conversational AI Engine & Multilingual Pipeline (EN/HI/MR)
-- [ ] **Phase 4**: Responsive Web Client (React + Vite + Voice I/O)
-- [ ] **Phase 5**: Native Android Application (Kotlin + Jetpack Compose)
-- [ ] **Phase 6**: Comprehensive Testing, Offline Caching & End-to-End Validation
-- [ ] **Phase 7**: Production Deployment (Vercel & Python Cloud Host)
+- [x] **Phase 2**: FastAPI Backend Core & Meteorological Data Integration (Open-Meteo & OpenWeather dual-provider support)
+- [x] **Phase 3**: Conversational AI Engine & Multilingual Pipeline (Grounded Trilingual Advisor in EN/HI/MR)
+- [x] **Phase 4**: Responsive Web Client (React 18 + Vite + Tailwind CSS + Web Speech API STT/TTS)
+- [x] **Phase 5**: Native Android Application (Kotlin, Jetpack Compose, Retrofit, Material 3, Android STT/TTS)
+- [x] **Phase 6**: Comprehensive Testing & Offline Caching (32 automated backend tests passing + verified Vite production build)
+- [x] **Phase 7**: Production Deployment (Vercel deployment setup with vercel.json)
+
+---
+
+## 🏃 Quick Start Guide
+
+### 1. Shared FastAPI Backend
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variables (optional; defaults to Open-Meteo with no key required)
+cp .env.example .env
+
+# Run FastAPI server with auto-reload
+uvicorn app.main:app --reload --port 8000
+```
+- Interactive API Swagger Docs: `http://localhost:8000/docs`
+- ReDoc Documentation: `http://localhost:8000/redoc`
+- Run automated test suite:
+```bash
+pytest backend/tests -v
+```
+
+### 2. React.js + Vite Web Application
+
+```bash
+# Navigate to website directory
+cd website
+
+# Install dependencies
+npm install
+
+# Start local development server
+npm run dev
+```
+- Web Application URL: `http://localhost:5173`
+- Production Build:
+```bash
+npm run build
+```
+- Production Deployed URL on Vercel: [https://weathergpt-ai-vert.vercel.app/](https://weathergpt-ai-vert.vercel.app/)
+
+### 3. Native Android Application (Jetpack Compose)
+
+```bash
+# Open in Android Studio
+# Open folder: ./android
+# Sync Gradle project and Run on Android Emulator or Physical Device
+```
+- Target SDK: Android 34 (Android 14)
+- Minimum SDK: Android 26 (Android 8.0+)
+- Configured with Retrofit communicating with FastAPI backend (defaults to `http://10.0.2.2:8000/` for emulator loopback).
+- Full speech-to-text (voice input) and text-to-speech (audio playback) in English, Hindi, and Marathi.
+
+---
 
 For in-depth architectural and development details, consult the [docs/](docs/) directory.
 

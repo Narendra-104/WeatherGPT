@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">WeatherGPT</string>
+    <string name="search_hint">Search city or district...</string>
+    <string name="current_weather">Current Weather</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="daily_forecast">7-Day Forecast</string>
+    <string name="ai_assistant">AI Weather Assistant</string>
+    <string name="compare_cities">Compare Cities</string>
+    <string name="active_alerts">Severe Weather Alerts</string>
+    <string name="no_alerts">No active weather alerts for this area.</string>
+    <string name="feels_like">Feels like</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind_speed">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="precipitation">Precipitation</string>
+    <string name="uv_index">UV Index</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="ask_placeholder">Ask in English, Hindi, or Marathi...</string>
+    <string name="send">Send</string>
+    <string name="voice_input">Voice Input</string>
+    <string name="listen">Listen</string>
+    <string name="retry">Retry</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_chat">AI Assistant</string>
+    <string name="nav_compare">Compare</string>
+    <string name="error_loading">Unable to fetch weather data. Please check your connection.</string>
+</resources>

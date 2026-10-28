@@ -32,5 +32,5 @@ class RateLimitExceededError(WeatherGPTException):
 
 class InvalidParameterError(WeatherGPTException):
     """Raised when request parameters are out of acceptable bounds."""
-    def __init__(self, message: str):
-        super().__init__(message, status_code=400)
+    def __init__(self, message: str, status_code: int = 422):
+        super().__init__(message, status_code=status_code)

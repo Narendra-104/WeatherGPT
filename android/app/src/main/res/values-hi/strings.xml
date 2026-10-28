@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">WeatherGPT</string>
+    <string name="search_hint">शहर या जिला खोजें...</string>
+    <string name="current_weather">वर्तमान मौसम</string>
+    <string name="hourly_forecast">प्रति घंटा पूर्वानुमान</string>
+    <string name="daily_forecast">7-दिवसीय पूर्वानुमान</string>
+    <string name="ai_assistant">एआई मौसम सहायक</string>
+    <string name="compare_cities">शहरों की तुलना करें</string>
+    <string name="active_alerts">गंभीर मौसम चेतावनी</string>
+    <string name="no_alerts">इस क्षेत्र के लिए कोई सक्रिय मौसम चेतावनी नहीं है।</string>
+    <string name="feels_like">महसूस होता है</string>
+    <string name="humidity">नमी</string>
+    <string name="wind_speed">हवा</string>
+    <string name="pressure">दबाव</string>
+    <string name="precipitation">वर्षा</string>
+    <string name="uv_index">यूवी सूचकांक</string>
+    <string name="sunrise">सूर्योदय</string>
+    <string name="sunset">सूर्यास्त</string>
+    <string name="ask_placeholder">हिंदी, अंग्रेजी या मराठी में पूछें...</string>
+    <string name="send">भेजें</string>
+    <string name="voice_input">आवाज इनपुट</string>
+    <string name="listen">सुनें</string>
+    <string name="retry">पुनः प्रयास करें</string>
+    <string name="nav_home">होम</string>
+    <string name="nav_chat">एआई चैट</string>
+    <string name="nav_compare">तुलना</string>
+    <string name="error_loading">मौसम डेटा प्राप्त करने में असमर्थ। कृपया कनेक्शन जांचें।</string>
+</resources>

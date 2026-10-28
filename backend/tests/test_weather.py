@@ -1,5 +1,7 @@
 from backend.app.schemas.weather import CurrentWeatherData
+from backend.app.schemas.location import LocationResult
 from backend.app.services.weather_service import weather_service
+from backend.app.services.location_service import location_service
 
 
 class MockWeatherProvider:
@@ -28,7 +30,17 @@ class MockWeatherProvider:
         raise NotImplementedError
 
     async def search_locations(self, query: str, count: int = 10, language: str = "en"):
-        raise NotImplementedError
+        if "pune" in query.lower():
+            return [
+                LocationResult(
+                    name="Pune",
+                    latitude=18.5204,
+                    longitude=73.8567,
+                    country="India",
+                    admin1="Maharashtra",
+                )
+            ]
+        return []
 
     async def get_alerts(self, latitude: float, longitude: float, language: str = "en"):
         raise NotImplementedError
@@ -48,6 +60,48 @@ async def test_current_weather_validation_errors(client):
     # Unsupported language
     response = await client.get("/api/v1/weather/current?latitude=18.52&longitude=73.85&language=es")
     assert response.status_code == 422
+
+    # Partial coordinates (latitude only)
+    response_partial = await client.get("/api/v1/weather/current?latitude=18.52")
+    assert response_partial.status_code == 422
+
+    # Neither coordinates nor city
+    response_none = await client.get("/api/v1/weather/current")
+    assert response_none.status_code == 422
+
+
+async def test_current_weather_city_based(client, monkeypatch):
+    mock = MockWeatherProvider()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
+
+    # Valid city
+    response = await client.get("/api/v1/weather/current?city=Pune&language=en")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["data"]["location_name"] == "Pune"
+    assert data["data"]["temperature"] == 28.5
+
+    # Unknown city returns 404
+    response_unknown = await client.get("/api/v1/weather/current?city=NonExistentCityXYZ")
+    assert response_unknown.status_code == 404
+    assert response_unknown.json()["success"] is False
+
+
+async def test_current_weather_precedence(client, monkeypatch):
+    mock = MockWeatherProvider()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
+
+    # When both coordinates and city are provided, coordinates take precedence
+    response = await client.get("/api/v1/weather/current?latitude=18.5204&longitude=73.8567&city=CustomLabel")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["data"]["latitude"] == 18.5204
+    assert data["data"]["longitude"] == 73.8567
+    assert data["data"]["location_name"] == "CustomLabel"
 
 
 async def test_current_weather_success(client, monkeypatch):

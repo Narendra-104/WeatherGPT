@@ -106,6 +106,7 @@ class OpenMeteoProvider(WeatherProvider):
             "latitude": latitude,
             "longitude": longitude,
             "current": "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m",
+            "daily": "sunrise,sunset,uv_index_max",
             "timezone": "auto",
         }
         url = f"{self.base_url}/forecast"
@@ -114,6 +115,11 @@ class OpenMeteoProvider(WeatherProvider):
         current = raw.get("current")
         if not current:
             raise WeatherProviderError("No current observation data returned by weather service")
+
+        daily = raw.get("daily", {})
+        sunrises = daily.get("sunrise", [])
+        sunsets = daily.get("sunset", [])
+        uv_indices = daily.get("uv_index_max", [])
 
         weather_code = int(current.get("weather_code", 0))
         return CurrentWeatherData(
@@ -129,7 +135,9 @@ class OpenMeteoProvider(WeatherProvider):
             wind_speed=current.get("wind_speed_10m"),
             wind_direction=current.get("wind_direction_10m"),
             surface_pressure=current.get("surface_pressure"),
-            uv_index=None,
+            uv_index=uv_indices[0] if uv_indices else None,
+            sunrise=sunrises[0] if sunrises else None,
+            sunset=sunsets[0] if sunsets else None,
             provider=self.name,
         )
 

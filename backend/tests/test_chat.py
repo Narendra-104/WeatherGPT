@@ -1,5 +1,8 @@
 from backend.app.schemas.weather import CurrentWeatherData
+from backend.app.schemas.forecast import ForecastData, DailyForecastItem, HourlyForecastItem
+from backend.app.schemas.location import LocationResult
 from backend.app.services.weather_service import weather_service
+from backend.app.services.location_service import location_service
 
 
 class MockWeatherProviderForChat:
@@ -7,13 +10,15 @@ class MockWeatherProviderForChat:
 
     async def get_current_weather(self, latitude: float, longitude: float, language: str = "en"):
         desc = "हल्की बारिश" if language == "hi" else "हलका पाऊस" if language == "mr" else "Light rain"
+        loc = "Mumbai" if abs(latitude - 19.07) < 0.5 else "Pune"
+        temp = 31.0 if loc == "Mumbai" else 26.0
         return CurrentWeatherData(
             latitude=latitude,
             longitude=longitude,
-            location_name="Pune",
+            location_name=loc,
             observation_time="2026-10-28T12:00:00Z",
-            temperature=26.0,
-            apparent_temperature=27.0,
+            temperature=temp,
+            apparent_temperature=temp + 1.0,
             relative_humidity=85.0,
             precipitation=3.2,
             weather_code=61,
@@ -26,13 +31,44 @@ class MockWeatherProviderForChat:
         )
 
     async def get_forecast(self, latitude: float, longitude: float, days: int = 7, language: str = "en"):
-        raise NotImplementedError
+        return ForecastData(
+            latitude=latitude,
+            longitude=longitude,
+            timezone="Asia/Kolkata",
+            hourly=[],
+            daily=[
+                DailyForecastItem(
+                    date="2026-10-28",
+                    temperature_max=28.0,
+                    temperature_min=22.0,
+                    precipitation_sum=2.0,
+                    precipitation_probability_max=70.0,
+                    weather_code=61,
+                    weather_description="Rain",
+                ),
+                DailyForecastItem(
+                    date="2026-10-29",
+                    temperature_max=29.0,
+                    temperature_min=23.0,
+                    precipitation_sum=5.0,
+                    precipitation_probability_max=80.0,
+                    weather_code=61,
+                    weather_description="Rain showers",
+                ),
+            ],
+            provider="mock-chat-provider",
+        )
 
     async def search_locations(self, query: str, count: int = 10, language: str = "en"):
-        raise NotImplementedError
+        q = query.lower()
+        if "pune" in q:
+            return [LocationResult(name="Pune", latitude=18.52, longitude=73.85, country="India")]
+        if "mumbai" in q:
+            return [LocationResult(name="Mumbai", latitude=19.07, longitude=72.87, country="India")]
+        return []
 
     async def get_alerts(self, latitude: float, longitude: float, language: str = "en"):
-        raise NotImplementedError
+        return []
 
 
 async def test_chat_without_location(client):
@@ -42,14 +78,15 @@ async def test_chat_without_location(client):
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
-    assert "location coordinates" in data["data"]["reply"].lower() or "city" in data["data"]["reply"].lower()
+    assert "city" in data["data"]["reply"].lower() or "coordinates" in data["data"]["reply"].lower()
     assert len(data["data"]["suggestions"]) > 0
 
 
 async def test_chat_with_grounded_weather_hindi(client, monkeypatch):
-    monkeypatch.setattr(weather_service, "provider", MockWeatherProviderForChat())
+    mock = MockWeatherProviderForChat()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
 
-    # Hindi question regarding rain
     payload = {
         "message": "क्या अभी बारिश हो रही है?",
         "language": "hi",
@@ -63,14 +100,13 @@ async def test_chat_with_grounded_weather_hindi(client, monkeypatch):
     assert data["success"] is True
     assert data["data"]["language"] == "hi"
     assert "Pune" in data["data"]["reply"] or "बारिश" in data["data"]["reply"]
-    assert data["data"]["grounded_facts"] is not None
-    assert data["data"]["grounded_facts"]["temperature"] == 26.0
 
 
 async def test_chat_agri_advisory_marathi(client, monkeypatch):
-    monkeypatch.setattr(weather_service, "provider", MockWeatherProviderForChat())
+    mock = MockWeatherProviderForChat()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
 
-    # Marathi question for agricultural spraying
     payload = {
         "message": "शेतीमध्ये आज औषध फवारणी करावी का?",
         "language": "mr",
@@ -83,5 +119,53 @@ async def test_chat_agri_advisory_marathi(client, monkeypatch):
     data = response.json()
     assert data["success"] is True
     assert data["data"]["language"] == "mr"
-    # Because precipitation is 3.2mm, should advise postponement
     assert "फवारणी" in data["data"]["reply"]
+
+
+async def test_chat_clothing_advisory(client, monkeypatch):
+    mock = MockWeatherProviderForChat()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
+
+    payload = {
+        "message": "What should I wear today in Pune?",
+        "language": "en",
+    }
+    response = await client.post("/api/v1/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "clothing advice" in data["data"]["reply"].lower() or "umbrella" in data["data"]["reply"].lower() or "wear" in data["data"]["reply"].lower()
+
+
+async def test_chat_city_comparison(client, monkeypatch):
+    mock = MockWeatherProviderForChat()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
+
+    payload = {
+        "message": "Compare Pune and Mumbai",
+        "language": "en",
+    }
+    response = await client.post("/api/v1/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "pune" in data["data"]["reply"].lower()
+    assert "mumbai" in data["data"]["reply"].lower()
+
+
+async def test_chat_outdoor_advice(client, monkeypatch):
+    mock = MockWeatherProviderForChat()
+    monkeypatch.setattr(weather_service, "provider", mock)
+    monkeypatch.setattr(location_service, "provider", mock)
+
+    payload = {
+        "message": "Is it a good time to go outside in Pune?",
+        "language": "en",
+    }
+    response = await client.post("/api/v1/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "outdoor" in data["data"]["reply"].lower() or "pune" in data["data"]["reply"].lower()

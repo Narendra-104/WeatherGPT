@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">WeatherGPT</string>
+    <string name="search_hint">शहर किंवा जिल्हा शोधा...</string>
+    <string name="current_weather">सध्याचे हवामान</string>
+    <string name="hourly_forecast">ताशी अंदाज</string>
+    <string name="daily_forecast">७-दिवसांचा अंदाज</string>
+    <string name="ai_assistant">एआय हवामान सहाय्यक</string>
+    <string name="compare_cities">शहरांची तुलना करा</string>
+    <string name="active_alerts">हवामान धोक्याचा इशारा</string>
+    <string name="no_alerts">या भागासाठी कोणताही हवामान इशारा नाही.</string>
+    <string name="feels_like">भासमान तापमान</string>
+    <string name="humidity">आर्द्रता</string>
+    <string name="wind_speed">वारा</string>
+    <string name="pressure">दाब</string>
+    <string name="precipitation">पर्जन्यवृष्टी</string>
+    <string name="uv_index">यूव्ही निर्देशांक</string>
+    <string name="sunrise">सूर्योदय</string>
+    <string name="sunset">सूर्यास्त</string>
+    <string name="ask_placeholder">मराठी, हिंदी किंवा इंग्रजीत विचारा...</string>
+    <string name="send">पाठवा</string>
+    <string name="voice_input">आवाज इनपुट</string>
+    <string name="listen">ऐका</string>
+    <string name="retry">पुन्हा प्रयत्न करा</string>
+    <string name="nav_home">मुख्यपृष्ठ</string>
+    <string name="nav_chat">एआय सहाय्यक</string>
+    <string name="nav_compare">तुलना</string>
+    <string name="error_loading">हवामान माहिती मिळवण्यात अडचण येत आहे. कृपया नेटवर्क तपासा.</string>
+</resources>

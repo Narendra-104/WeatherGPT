@@ -173,6 +173,13 @@ class OpenWeatherProvider(WeatherProvider):
         dt_val = raw.get("dt")
         obs_time = datetime.fromtimestamp(dt_val, timezone.utc).isoformat() if dt_val else datetime.now(timezone.utc).isoformat()
 
+        # Sunrise and sunset timestamps
+        sys_data = raw.get("sys", {})
+        sr_ts = sys_data.get("sunrise")
+        ss_ts = sys_data.get("sunset")
+        sunrise_iso = datetime.fromtimestamp(sr_ts, timezone.utc).isoformat() if sr_ts else None
+        sunset_iso = datetime.fromtimestamp(ss_ts, timezone.utc).isoformat() if ss_ts else None
+
         return CurrentWeatherData(
             latitude=raw.get("coord", {}).get("lat", latitude),
             longitude=raw.get("coord", {}).get("lon", longitude),
@@ -188,6 +195,8 @@ class OpenWeatherProvider(WeatherProvider):
             wind_direction=wind_data.get("deg"),
             surface_pressure=main.get("pressure"),
             uv_index=None,
+            sunrise=sunrise_iso,
+            sunset=sunset_iso,
             provider=self.name,
         )
 
