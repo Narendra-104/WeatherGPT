@@ -11,20 +11,31 @@ from backend.app.utils.logger import logger
 
 class AlertService:
     def __init__(self, provider: Optional[WeatherProvider] = None):
-        self.provider = provider or get_weather_provider()
+        self._provider = provider
         self.ttl = 600  # 10 minutes cache for alerts
+
+    @property
+    def provider(self) -> WeatherProvider:
+        if self._provider is not None:
+            return self._provider
+        return get_weather_provider()
+
+    @provider.setter
+    def provider(self, val: Optional[WeatherProvider]):
+        self._provider = val
 
     async def get_alerts(
         self, latitude: float, longitude: float, location: Optional[str] = None, language: str = "en"
     ) -> AlertListResponse:
-        cache_key = f"alerts:{latitude:.2f}:{longitude:.2f}:{language}"
+        active_provider = self.provider
+        cache_key = f"{active_provider.name}:alerts:{latitude:.2f}:{longitude:.2f}:{language}"
         cached = weather_cache.get(cache_key)
         if cached:
-            logger.info(f"Cache hit for weather alerts at {latitude},{longitude}")
+            logger.info(f"Cache hit for [{active_provider.name}] weather alerts at {latitude},{longitude}")
             return cached
 
-        logger.info(f"Checking alerts for {latitude},{longitude} via {self.provider.name}")
-        alerts = await self.provider.get_alerts(latitude, longitude, language=language)
+        logger.info(f"Checking alerts for {latitude},{longitude} via [{active_provider.name}]")
+        alerts = await active_provider.get_alerts(latitude, longitude, language=language)
         response = AlertListResponse(
             location=location or f"Coords ({latitude:.2f}, {longitude:.2f})",
             latitude=latitude,

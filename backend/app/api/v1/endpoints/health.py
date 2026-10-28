@@ -20,6 +20,8 @@ START_TIME = time.time()
 async def get_health():
     """Verify backend availability, provider configuration, and active cache size."""
     uptime_seconds = int(time.time() - START_TIME)
+    is_key_set = settings.is_weather_api_key_configured if settings.normalized_weather_provider == "openweather" else True
+
     return APIResponse(
         success=True,
         message="WeatherGPT backend service is operating normally",
@@ -27,7 +29,8 @@ async def get_health():
             "status": "healthy",
             "version": settings.VERSION,
             "environment": settings.APP_ENV,
-            "provider": settings.PRIMARY_WEATHER_PROVIDER,
+            "provider": settings.normalized_weather_provider,
+            "provider_key_configured": is_key_set,
             "ai_provider": settings.AI_PROVIDER,
             "supported_languages": settings.SUPPORTED_LANGUAGES,
             "cached_entries": weather_cache.size(),
