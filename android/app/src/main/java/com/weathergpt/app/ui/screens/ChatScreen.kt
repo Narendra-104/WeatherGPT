@@ -181,9 +181,11 @@ fun ChatScreen(
                     modifier = Modifier.weight(1f),
                     maxLines = 3,
                     shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = DarkBackground,
-                        textColor = TextPrimary,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = DarkBackground,
+                        unfocusedContainerColor = DarkBackground,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
                         cursorColor = Blue80,
                         focusedBorderColor = Blue80,
                         unfocusedBorderColor = Color.Transparent

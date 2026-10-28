@@ -74,9 +74,11 @@ fun HomeScreen(
                             Icon(Icons.Default.Search, contentDescription = "Search", tint = Blue80)
                         }
                     },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = DarkSurface,
-                        textColor = TextPrimary,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = DarkSurface,
+                        unfocusedContainerColor = DarkSurface,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
                         cursorColor = Blue80,
                         focusedBorderColor = Blue80,
                         unfocusedBorderColor = DarkSurfaceVariant
