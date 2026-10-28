@@ -34,7 +34,7 @@ app = FastAPI(
         "Shared high-performance backend serving the WeatherGPT responsive web application "
         "and native Android mobile application. Delivers verified real-time weather observations, "
         "hourly and multi-day forecasts, severe weather alerts, and context-grounded multilingual "
-        "conversational AI assistance in English, Hindi, and Marathi (SIH26068)."
+        "conversational AI assistance in English, Hindi, and Marathi."
     ),
     docs_url="/docs",
     redoc_url="/redoc",

@@ -188,7 +188,7 @@ export default function App() {
       <footer className="border-t border-slate-900 bg-slate-950/80 py-6 mt-12 text-center text-xs text-slate-500">
         <p>{t.poweredBy}</p>
         <p className="mt-1">
-          Smart India Hackathon • Problem ID: <span className="font-semibold text-sky-400">SIH26068</span>
+          WeatherGPT — AI-Powered Multilingual Weather & Alert Assistant
         </p>
       </footer>
 

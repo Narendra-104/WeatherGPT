@@ -96,7 +96,7 @@ export default function Header({
                 WeatherGPT
               </span>
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">
-                SIH26068
+                AI
               </span>
             </div>
             <p className="text-xs text-slate-400 hidden sm:block">
