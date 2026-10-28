@@ -1,0 +1,9 @@
+{
+  "name": "weathergpt-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WeatherGPT Monorepo",
+  "scripts": {
+    "build": "cd website && npm install && npm run build"
+  }
+}
