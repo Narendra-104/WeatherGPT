@@ -13,6 +13,7 @@ export default function Header({
   onLanguageChange,
   onOpenChat,
   onOpenCompare,
+  onOpenLocationModal,
   isLoadingLocation 
 }) {
   const [query, setQuery] = useState('');
@@ -163,6 +164,18 @@ export default function Header({
 
         {/* Actions & Language Selector */}
         <div className="flex items-center gap-2">
+          {/* Select Location Button */}
+          <button
+            onClick={onOpenLocationModal}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 transition-all hover:scale-105 shrink-0"
+            title={language === 'hi' ? 'स्थान चुनें' : language === 'mr' ? 'स्थान निवडा' : 'Select Location'}
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">
+              {language === 'hi' ? 'स्थान चुनें' : language === 'mr' ? 'स्थान निवडा' : 'Select Location'}
+            </span>
+          </button>
+
           {/* Compare Button */}
           <button
             onClick={onOpenCompare}

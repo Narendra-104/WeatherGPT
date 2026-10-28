@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
-  Thermometer, Droplets, Wind, Gauge, CloudRain, Sun, Compass, Sunrise, Sunset, ShieldAlert, Sparkles 
+  Thermometer, Droplets, Wind, Gauge, CloudRain, Sun, Compass, Sunrise, Sunset, ShieldAlert, Sparkles, MapPin 
 } from 'lucide-react';
 import { translations } from '../i18n/translations';
 
-export default function CurrentWeather({ weather, language, onOpenAI }) {
+export default function CurrentWeather({ weather, language, onOpenAI, onOpenLocationModal }) {
   const t = translations[language] || translations.en;
 
   if (!weather) return null;
@@ -45,11 +45,19 @@ export default function CurrentWeather({ weather, language, onOpenAI }) {
       {/* Top Bar: Location & Provider Info */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6 relative z-10">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               {weather.location_name || `${weather.latitude.toFixed(2)}°, ${weather.longitude.toFixed(2)}°`}
             </h1>
-            <span className="text-xs px-2.5 py-1 rounded-full bg-slate-700/60 text-slate-300 font-medium border border-slate-600/40">
+            <button
+              onClick={onOpenLocationModal}
+              className="text-xs px-2.5 py-1 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-bold border border-sky-500/40 transition-colors flex items-center gap-1 shadow-sm"
+              title="Change Location"
+            >
+              <MapPin className="w-3 h-3 text-sky-400" />
+              <span>{language === 'hi' ? 'स्थान बदलें' : language === 'mr' ? 'स्थान बदला' : 'Change Location'}</span>
+            </button>
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-700/60 text-slate-300 font-medium border border-slate-600/40">
               {weather.provider}
             </span>
           </div>

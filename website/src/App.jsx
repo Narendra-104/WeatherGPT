@@ -7,16 +7,20 @@ import AlertBanner from './components/AlertBanner';
 import SavedLocations from './components/SavedLocations';
 import AIChatModal from './components/AIChatModal';
 import CityComparison from './components/CityComparison';
+import LocationModal from './components/LocationModal';
 import { api } from './api/client';
 import { translations } from './i18n/translations';
 import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function App() {
   const [language, setLanguage] = useState(() => localStorage.getItem('weathergpt_lang') || 'en');
-  const [currentCity, setCurrentCity] = useState({
-    name: 'Pune',
-    latitude: 18.5204,
-    longitude: 73.8567,
+  const [currentCity, setCurrentCity] = useState(() => {
+    try {
+      const saved = localStorage.getItem('weathergpt_city');
+      return saved ? JSON.parse(saved) : { name: 'Pune', latitude: 18.5204, longitude: 73.8567 };
+    } catch {
+      return { name: 'Pune', latitude: 18.5204, longitude: 73.8567 };
+    }
   });
 
   const [weather, setWeather] = useState(null);
@@ -29,6 +33,7 @@ export default function App() {
   // Modals state
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   const t = translations[language] || translations.en;
 
@@ -107,18 +112,28 @@ export default function App() {
     );
   };
 
+  const handleSelectCity = (city) => {
+    setCurrentCity(city);
+    try {
+      localStorage.setItem('weathergpt_city', JSON.stringify(city));
+    } catch {
+      // Ignore storage errors
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-sky-500 selection:text-white">
       
       {/* Top Header */}
       <Header
         currentCity={currentCity}
-        onSelectCity={(city) => setCurrentCity(city)}
+        onSelectCity={handleSelectCity}
         onUseLocation={handleUseCurrentLocation}
         language={language}
         onLanguageChange={handleLanguageChange}
         onOpenChat={() => setIsChatOpen(true)}
         onOpenCompare={() => setIsCompareOpen(true)}
+        onOpenLocationModal={() => setIsLocationModalOpen(true)}
         isLoadingLocation={isLoadingLocation}
       />
 
@@ -128,7 +143,8 @@ export default function App() {
         {/* Quick Access Saved Cities */}
         <SavedLocations
           currentCity={currentCity}
-          onSelectCity={(city) => setCurrentCity(city)}
+          onSelectCity={handleSelectCity}
+          onOpenLocationModal={() => setIsLocationModalOpen(true)}
           language={language}
         />
 
@@ -165,7 +181,8 @@ export default function App() {
             <CurrentWeather 
               weather={weather} 
               language={language} 
-              onOpenAI={() => setIsChatOpen(true)} 
+              onOpenAI={() => setIsChatOpen(true)}
+              onOpenLocationModal={() => setIsLocationModalOpen(true)}
             />
 
             {/* Hourly & Daily Forecasts */}
@@ -191,6 +208,16 @@ export default function App() {
           WeatherGPT — AI-Powered Multilingual Weather & Alert Assistant
         </p>
       </footer>
+
+      {/* Select Location Modal */}
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        currentCity={currentCity}
+        onSelectCity={handleSelectCity}
+        onUseGPS={handleUseCurrentLocation}
+        language={language}
+      />
 
       {/* AI Assistant Modal */}
       <AIChatModal

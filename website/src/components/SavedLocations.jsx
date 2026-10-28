@@ -11,7 +11,7 @@ const DEFAULT_CITIES = [
   { name: 'Nashik', lat: 19.9975, lon: 73.7898 },
 ];
 
-export default function SavedLocations({ currentCity, onSelectCity, language }) {
+export default function SavedLocations({ currentCity, onSelectCity, onOpenLocationModal, language }) {
   const t = translations[language] || translations.en;
 
   return (
@@ -37,6 +37,14 @@ export default function SavedLocations({ currentCity, onSelectCity, language }) 
           </button>
         );
       })}
+
+      <button
+        onClick={onOpenLocationModal}
+        className="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center gap-1 transition-all shrink-0"
+      >
+        <MapPin className="w-3 h-3" />
+        <span>{language === 'hi' ? '+ अन्य स्थान' : language === 'mr' ? '+ इतर शहरे' : '+ More Locations'}</span>
+      </button>
     </div>
   );
 }
